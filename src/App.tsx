@@ -1,122 +1,85 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState, type FormEvent } from "react";
+import { Loader, Placeholder } from "@aws-amplify/ui-react";
+import "./App.css";
+import { Amplify } from "aws-amplify";
+import type { Schema } from "../amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
+import outputs from "../amplify_outputs.json";
+import "@aws-amplify/ui-react/styles.css";
+
+Amplify.configure(outputs);
+
+const amplifyClient = generateClient<Schema>({
+  authMode: "userPool",
+});
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [result, setResult] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    try {
+      const formData = new FormData(event.currentTarget);
+      const { data, errors } = await amplifyClient.queries.askBedrock({
+        ingredients: [formData.get("ingredients")?.toString() || ""],
+      });
+      if (!errors) {
+        setResult(data?.body || data?.error || "No data returned");
+      } else {
+        console.log(errors);
+      }
+    } catch (e) {
+      alert(`An error occurred: ${e}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="app-container">
+      <div className="header-container">
+        <h1 className="main-header">
+          Meet Your Personal
+          <br />
+          <span className="highlight">Recipe AI</span>
+        </h1>
+        <p className="description">
+          Simply type a few ingredients using the format ingredient1,
+          ingredient2, etc., and Recipe AI will generate an all-new recipe on
+          demand...
+        </p>
+      </div>
+      <form onSubmit={onSubmit} className="form-container">
+        <div className="search-container">
+          <input
+            type="text"
+            className="wide-input"
+            id="ingredients"
+            name="ingredients"
+            placeholder="Ingredient1, Ingredient2, Ingredient3,...etc"
+          />
+          <button type="submit" className="search-button">
+            Generate
+          </button>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </form>
+      <div className="result-container">
+        {loading ? (
+          <div className="loader-container">
+            <p>Loading...</p>
+            <Loader size="large" />
+            <Placeholder size="large" />
+            <Placeholder size="large" />
+            <Placeholder size="large" />
+          </div>
+        ) : (
+          result && <p className="result">{result}</p>
+        )}
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
