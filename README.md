@@ -210,8 +210,9 @@ Managing cloud permissions with AWS IAM
 Troubleshooting CI/CD dependency and build failures
 Deploying frontend and backend resources through Amplify Gen 2
 Using GitHub as the source for automated cloud deployments
-Author
 
+
+Author
 Gloria Page
 
 Cloud Security, Cybersecurity, AWS Cloud Engineering, AI, and GRC
