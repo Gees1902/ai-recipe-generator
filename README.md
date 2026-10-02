@@ -218,7 +218,7 @@ Gloria Page
 Cloud Security, Cybersecurity, AWS Cloud Engineering, AI, and GRC
 
 GitHub: Gees1902
-Website: BigTechGirls.com
+Website: https://gloriapage.com/ BigTechGirls.com
 
 
 Disclaimer
