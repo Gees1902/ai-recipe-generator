@@ -18,7 +18,6 @@ The application sends the ingredients through an AWS AppSync GraphQL query to Am
 ## Architecture Design
 ![Architecture Design](screenshots/AI recipe  architecture.png)
 
-![Architecture Design](screenshots/AI recipe  architecture.png)
 
 
 Features
