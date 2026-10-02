@@ -15,6 +15,11 @@ chicken, cheese, bread
 
 The application sends the ingredients through an AWS AppSync GraphQL query to Amazon Bedrock. Amazon Nova Lite processes the request and returns a generated recipe to the React interface.
 
+## Architecture Design
+
+![Architecture Design](screenshots/AI recipe  architecture.png)
+
+
 Features
 Generates recipes from user-provided ingredients
 Responsive React and TypeScript interface
